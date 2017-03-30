@@ -1,0 +1,10 @@
+package senderClient;
+
+public class sender {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

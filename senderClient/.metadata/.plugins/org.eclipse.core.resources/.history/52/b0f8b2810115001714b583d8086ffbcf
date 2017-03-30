@@ -1,0 +1,73 @@
+package senderClient;
+
+import javax.sound.sampled.*;
+
+public class sender {
+
+	public static void main(String[] args) throws LineUnavailableException {
+		/*
+		Mixer.Info[] mixers = AudioSystem.getMixerInfo();
+		
+		
+		for(Mixer.Info a : mixers){
+			System.out.println(a);
+		}
+		
+		
+		Mixer output = AudioSystem.getMixer(mixers[2]);
+		System.out.println(output.getMixerInfo());
+		
+		Line[] lines = output.getSourceLines();
+		
+		System.out.println(lines.length);
+		for(Line a : lines){
+			System.out.println(a.getLineInfo());
+		}
+		*/
+		Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
+		 for (Mixer.Info info: mixerInfos){
+		  Mixer m = AudioSystem.getMixer(info);
+		  Line.Info[] lineInfos = m.getSourceLineInfo();
+		  for (Line.Info lineInfo:lineInfos){
+		   System.out.println (info.getName()+"---"+lineInfo);
+		   Line line = m.getLine(lineInfo);
+		   System.out.println("\t-----"+line);
+		  }
+		  lineInfos = m.getTargetLineInfo();
+		  for (Line.Info lineInfo:lineInfos){
+		   System.out.println (m+"---"+lineInfo);
+		   Line line = m.getLine(lineInfo);
+		   System.out.println("\t-----"+line);
+
+		  }
+
+		 }
+		
+		/*
+		float sampleRate = 16000;
+        int sampleSizeInBits = 8;
+        int channels = 2;
+        boolean signed = true;
+        boolean bigEndian = true;
+        AudioFormat format = new AudioFormat(sampleRate, sampleSizeInBits,
+                                             channels, signed, bigEndian);
+        
+		TargetDataLine line;
+		DataLine.Info info = new DataLine.Info(TargetDataLine.class, 
+		    format); // format is an AudioFormat object
+		if (!AudioSystem.isLineSupported(info)) {
+		    // Handle the error.
+		    }
+		    // Obtain and open the line.
+		try {
+		    line = (TargetDataLine) AudioSystem.getLine(info);
+		    line.open(format);
+		} catch (LineUnavailableException ex) {
+		        // Handle the error.
+		    //... 
+		}
+		*/
+
+	}
+
+}
