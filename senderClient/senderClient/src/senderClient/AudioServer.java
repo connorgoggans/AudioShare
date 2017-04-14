@@ -6,14 +6,14 @@ import java.net.*;
 public class AudioServer {
     public static void main(String[] args) throws IOException {
         if (args.length == 0)
-            throw new IllegalArgumentException("expected sound file arg");
+            throw new IllegalArgumentException("Expected Sound File");
         File soundFile = new File(args[0]);
 
         System.out.println("server: " + soundFile);
 
-        try (ServerSocket serverSocker = new ServerSocket(6666); 
+        try (ServerSocket serverSocker = new ServerSocket(6666); //New Socket
             FileInputStream in = new FileInputStream(soundFile)) {
-            if (serverSocker.isBound()) {
+            if (serverSocker.isBound()) { //if connected, write the file to the output
                 Socket client = serverSocker.accept();
                 OutputStream out = client.getOutputStream();
 
@@ -24,6 +24,6 @@ public class AudioServer {
             }
         }
 
-        System.out.println("server: shutdown");
+        System.out.println("Done");
     }
 }
