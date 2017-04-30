@@ -12,10 +12,10 @@ import java.util.*;
 public class threadedSender extends Thread {
 
     private static threadedSender instance = null;
-    File file = null;
-    InputStream audio = null;
-    Socket socket = null;
-    ReentrantReadWriteLock fileLock = null;
+    File file;
+    InputStream audio;
+    Socket socket;
+    ReentrantReadWriteLock fileLock;
     
     public void run() {
 
@@ -23,8 +23,8 @@ public class threadedSender extends Thread {
 	    boolean connect = socket.isConnected();
 	    System.out.println(connect);
 	    System.out.println("Sending file...");
-	    fileLock.writelock().lock();
-	    file = new File("audioFile.wav");
+	    fileLock.writeLock().lock();
+	    //    file = new File("audioFile.wav");
 	    byte[] bytes = new byte[2048];
 	    audio = new BufferedInputStream(socket.getInputStream());
 	    OutputStream out = new FileOutputStream(file);
@@ -34,8 +34,8 @@ public class threadedSender extends Thread {
 		out.write(bytes,0,count);
 	    }
 	    out.close();
-	    fileLock.writelock().unlock();
-	    System.out.println("done");
+	    fileLock.writeLock().unlock();
+	    System.out.println(file);
 	}catch(IOException e) {
 	    e.printStackTrace();
 	}

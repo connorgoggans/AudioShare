@@ -17,7 +17,7 @@ public class threadedReceiver extends Thread{
 		while(true){
 			try {
 				OutputStream out = s.getOutputStream();
-				fileLock.readlock().lock();
+			    fileLock.readLock().lock();
 				FileInputStream in = new FileInputStream(audio); //input stream for audio file
 
 				byte buffer[] = new byte[2048];
@@ -31,7 +31,7 @@ public class threadedReceiver extends Thread{
 				}
 				
 				in.close();
-				fileLock.readlock().unlock();
+				fileLock.readLock().unlock();
 			}catch (IOException e) {
 				e.printStackTrace();
 			}

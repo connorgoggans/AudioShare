@@ -24,9 +24,13 @@ public class newServer {
 			//try {
 				//if the socket is connected send the file
 			    //if(socket.isConnected()) {
-				    //audio = new BufferedInputStream(socket.getInputStream());
+
+
+			//audio = new BufferedInputStream(socket.getInputStream());
+			file = new File("audioFile.wav");
 			Thread send = new threadedSender(file, audio, socket, fileLock);
 				    p.execute(send);
+	
 				    System.out.println(file);
 				    //temporary file to store data in
 				    //				    	file = new File("audioFile.wav");
@@ -49,13 +53,18 @@ public class newServer {
 
 			//loop and create worker threads for connections
 			while(true) {
-				System.out.println("Waiting...");
+			    
+			    if(file == null) {
+			    }
+			    else {
+				//System.out.println("Waiting...");
 				Socket s = ss.accept();
-				System.out.println("Rcv wait 1");
+				System.out.println(file);
 				Thread w = new threadedReceiver(s, file, fileLock);
 				//handle the streaming to clients in individual threads
 				System.out.println("Rcv wait 2");
 				p.execute(w);
+			    }
 				
 			}
 			
