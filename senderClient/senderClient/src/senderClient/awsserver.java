@@ -10,8 +10,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.io.BufferedInputStream;
 
-public class audioserver {
+public class awsserver {
 
     public static void main(String args[]) {
 		//create server instance
@@ -20,7 +21,7 @@ public class audioserver {
 			ss = new ServerSocket(8888);
 
 			//read in audio on first connected client
-			InputStream audio;
+			InputStream audio =null;
 			try (Socket socket = ss.accept()) { //localhost, later sub for AWS IP
 				if (socket.isConnected()) {
 					audio = new BufferedInputStream(socket.getInputStream());
