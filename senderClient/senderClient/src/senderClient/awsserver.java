@@ -11,6 +11,8 @@ import java.io.ByteArrayInputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.io.BufferedInputStream;
+import java.io.*;
+import java.net.*;
 
 public class awsserver {
 
@@ -22,9 +24,24 @@ public class awsserver {
 
 			//read in audio on first connected client
 			InputStream audio =null;
+			File audioFile = new File("audioFile.wav");
 			try (Socket socket = ss.accept()) { //localhost, later sub for AWS IP
+			    System.out.println("hey it's the sender!");
 				if (socket.isConnected()) {
-					audio = new BufferedInputStream(socket.getInputStream());
+				    audio = new BufferedInputStream(socket.getInputStream());
+				    byte[] buffer = new byte[2048];
+				    OutputStream outStream = new FileOutputStream(audioFile);
+				    int current = 0;
+				    int bytesRead = audio.read(buffer, 0, buffer.length);
+				    while(bytesRead>-1) {
+				       bytesRead = audio.read(buffer, current, (buffer.length-current));
+				       outStream.write(buffer);
+				       if(bytesRead >= 0) {
+					   current += bytesRead;
+				       }
+				       System.out.print(audio.available() + " ");
+				    }
+				    System.out.println("done");
 				}
 			}
 
@@ -33,6 +50,7 @@ public class awsserver {
 
 			//loop and create worker threads for connections
 			while(true){
+			    System.out.println("Waiting...");
 				Socket s = ss.accept();
 				Thread w;
 				w = new threadedReceiver(s, audio);
