@@ -14,10 +14,11 @@ public class threadedReceiver extends Thread{
     ReentrantReadWriteLock fileLock;
 
 	public void run() {
-		while(true){
+	    //while(true){
 			try {
 				OutputStream out = s.getOutputStream();
 			    fileLock.readLock().lock();
+			    System.out.println("Playing file...");
 				FileInputStream in = new FileInputStream(audio); //input stream for audio file
 
 				byte buffer[] = new byte[2048];
@@ -35,7 +36,7 @@ public class threadedReceiver extends Thread{
 			}catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
+			//	}
 	}
 
 	//threaded receiver constructor

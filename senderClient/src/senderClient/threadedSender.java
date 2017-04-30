@@ -18,32 +18,43 @@ public class threadedSender extends Thread {
     ReentrantReadWriteLock fileLock;
     
     public void run() {
-
+	OutputStream out=null;
 	try {
+	    while(true) {
+	    audio = new BufferedInputStream(socket.getInputStream());
+	    while(audio.available()==0);
 	    boolean connect = socket.isConnected();
 	    System.out.println(connect);
 	    System.out.println("Sending file...");
 	    fileLock.writeLock().lock();
 	    //    file = new File("audioFile.wav");
 	    byte[] bytes = new byte[2048];
-	    audio = new BufferedInputStream(socket.getInputStream());
-	    OutputStream out = new FileOutputStream(file);
+	    //audio = new BufferedInputStream(socket.getInputStream());
+	    out = new FileOutputStream(file);
 	    int count;
 	    //write out data to the file
 	    while ((count = audio.read(bytes)) >0) {
 		out.write(bytes,0,count);
 	    }
-	    out.close();
+	    out.flush();
 	    fileLock.writeLock().unlock();
-	    System.out.println(file);
+	    System.out.println("done: "+ file);
+	    }
+	    
 	}catch(IOException e) {
 	    e.printStackTrace();
+	}finally {
+	    try {
+		out.close();
+	    }catch (IOException e) {
+		e.printStackTrace();
+	    }
 	}
     }
 
-    public threadedSender(File f, InputStream a, Socket s, ReentrantReadWriteLock l) {
+    public threadedSender(File f, Socket s, ReentrantReadWriteLock l) {
 	this.file = f;
-	this.audio = a;
+	//this.audio = a;
 	this.socket = s;
 	this.fileLock = l;
     }
