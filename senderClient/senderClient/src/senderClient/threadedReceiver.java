@@ -11,22 +11,22 @@ public class threadedReceiver extends Thread{
 	Socket s;
 	File audio;
 
-	public void run() throws IOException{
-		try{
-			OutputStream out = s.getOutputStream();
-			FileInputStream in = new FileInputStream(audio);
+	public void run() {
+	    try {
+        OutputStream out = s.getOutputStream();
+        FileInputStream in = new FileInputStream(audio);
 
-			byte buffer[] = new byte[2048];
-			int count;
-			count = in.read(buffer);
-			while(count >= 0){
-				System.out.print(count + " ");
-				out.write(buffer,0,count);
-				count = in.read(buffer);	
-			}
-		}catch(IOException e){
-
-		}
+        byte buffer[] = new byte[2048];
+        int count;
+        count = in.read(buffer);
+        while(count >= 0){
+        		System.out.print(count + " ");
+            	out.write(buffer,0,count);
+            	count = in.read(buffer);
+        }
+	    }catch (IOException e) {
+		e.printStackTrace();
+	    }
 	}
 
 	public threadedReceiver(Socket socket, File input){
