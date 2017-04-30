@@ -13,27 +13,33 @@ public class newServer {
 		
 		try {
 			ss = new ServerSocket(8888); //create a server socket
+
+			//create thread pool of 10 threads
+			ExecutorService p = Executors.newFixedThreadPool(10);
 			
 			//accept and handle the hosting connection
 			try(Socket socket = ss.accept()) {
 				//if the socket is connected send the file
 				if(socket.isConnected()) {
-					//temporary file to store data in
-					file = new File("audioFile.wav");
-					byte[] bytes = new byte[2048];
-					audio = new BufferedInputStream(socket.getInputStream());
-					OutputStream out = new FileOutputStream(file);
-					int count;
-					//write out data to the file
-					while ((count = audio.read(bytes)) >0) {
-						out.write(bytes,0,count);
-					}
-					out.close();
+				    audio = new BufferedInputStream(socket.getInputStream());
+		     		    Thread w = threadedSender.getSender(file, audio);
+				    p.execute(w);
+				    //temporary file to store data in
+				    //				    	file = new File("audioFile.wav");
+				    //	byte[] bytes = new byte[2048];
+				    //	audio = new BufferedInputStream(socket.getInputStream());
+				    //	OutputStream out = new FileOutputStream(file);
+				    //	int count;
+				    //	//write out data to the file
+					//		while ((count = audio.read(bytes)) >0) {
+					//	out.write(bytes,0,count);
+				    	//}
+				   	//out.close();
 				}
 			}
 
 			//create thread pool of 10 threads
-			ExecutorService p = Executors.newFixedThreadPool(10);
+			//ExecutorService p = Executors.newFixedThreadPool(10);
 
 			//loop and create worker threads for connections
 			while(true) {
