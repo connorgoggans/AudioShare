@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="javax.sound.sampled.TargetDataLine"/>
-<fullyQualifiedTypeName name="javax.sound.sampled.Mixer.Info"/>
-<fullyQualifiedTypeName name="javax.sound.sampled.Line.Info"/>
-<fullyQualifiedTypeName name="java.io.ByteArrayOutputStream"/>
-</qualifiedTypeNameHistroy>
