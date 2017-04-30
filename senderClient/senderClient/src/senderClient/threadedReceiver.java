@@ -1,7 +1,7 @@
+package senderClient;
 import java.io.InputStream;
 import java.net.Socket;
-
-import org.omg.CORBA_2_3.portable.OutputStream;
+import java.io.OutputStream;
 
 public class threadedReceiver extends Thread{
 
