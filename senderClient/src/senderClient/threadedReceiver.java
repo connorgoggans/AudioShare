@@ -11,23 +11,25 @@ public class threadedReceiver extends Thread{
 	File audio;
 
 	public void run() {
-		try {
-			OutputStream out = s.getOutputStream();
-			FileInputStream in = new FileInputStream(audio); //input stream for audio file
+		while(true){
+			try {
+				OutputStream out = s.getOutputStream();
+				FileInputStream in = new FileInputStream(audio); //input stream for audio file
 
-			byte buffer[] = new byte[2048];
-			int count;
-			count = in.read(buffer);
-			
-			//write out audio to client
-			while(count >= 0){ 
-				out.write(buffer,0,count);
+				byte buffer[] = new byte[2048];
+				int count;
 				count = in.read(buffer);
+				
+				//write out audio to client
+				while(count >= 0){ 
+					out.write(buffer,0,count);
+					count = in.read(buffer);
+				}
+				
+				in.close();
+			}catch (IOException e) {
+				e.printStackTrace();
 			}
-			
-			in.close();
-		}catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
