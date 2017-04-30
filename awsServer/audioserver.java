@@ -8,55 +8,45 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class AudioServer {
+public class audioserver {
 
     public static void main(String args[]) {
-	ServerSocket ss = null;
-	Socket socket = null;
-	Socket clientSocket = null;
-	try {
-	    ss = new ServerSocket(8888); //check port
-	    while(true) {
-		socket = ss.accept();
+		//create server instance
+		ServerSocket ss = null;
+		try{
+			ss = new ServerSocket(8888);
 
-		InputStream is = socket.getInputStream();
-		OutputStream os = socket.getOutputStream();
+			//read in audio on first connected client
+			InputStream audio;
+			try (Socket socket = ss.accept()) { //localhost, later sub for AWS IP
+				if (socket.isConnected()) {
+					audio = new BufferedInputStream(socket.getInputStream());
+				}
+			}
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			//create thread pool of 10 threads
+			ExecutorService p = Executors.newFixedThreadPool(10);
 
-		byte[] buffer = new byte[1024];
-		int len;
-		while((len = is.read()) !=  -1) {
-		    baos.write((byte)len);
+			//loop and create worker threads for connections
+			while(true){
+				Socket s = ss.accept();
+				Thread w;
+				w = new threadedReceiver(s, audio);
+				p.execute(w);
+			}
+		}catch(IOException e){
+			e.printStackTrace();
+		}finally{
+			if(ss != null){
+				try {
+					ss.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
-		baos.flush();
-
-		//The following will be in a for loop in the future depending on how many
-		//IP Addresses we're outputting the data to
-
-		InputStream is1 = new ByteArrayInputStream(baos.toByteArray());
-		clientSocket = new Socket("localhost", 8888); //will pull IP Address from input stream in future
-		OutputStream output = clientSocket.getOutputStream();
-		whie((len = is1.read())!= -1) {
-		    output.write((byte)len);
-		    if (len == '\n') {
-			output.flush();
-		    }
-		}
-	    
-	    }
-	} catch (IOException e) {
-	    e.printStackTrace();
-	} finally {
-	    if (ss != null) {
-		try {
-		    ss.close();
-		    socket.close();
-		    clientSocket.close();
-		} catch (IOException ignored) {
-		}
-	    }
 	}
-    }
 }

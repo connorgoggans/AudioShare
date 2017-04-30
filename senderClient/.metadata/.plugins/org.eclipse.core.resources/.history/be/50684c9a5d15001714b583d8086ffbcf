@@ -1,0 +1,50 @@
+package senderClient;
+
+import javax.sound.sampled.*;
+
+public class sender {
+
+	public static void main(String[] args) throws LineUnavailableException {
+		/*
+		Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
+		int i = 1;
+		for (Mixer.Info info: mixerInfos){
+			System.out.println("Mixer: " + i);
+			Mixer m = AudioSystem.getMixer(info);
+			Line.Info[] lineInfos = m.getSourceLineInfo();
+			int a = 1;
+			for (Line.Info lineInfo:lineInfos){
+				System.out.println("Source Line: " + a);
+				System.out.println (info.getName()+"---"+lineInfo);
+				Line line = m.getLine(lineInfo);
+				System.out.println("\t-----"+line);
+				a++;
+			}
+			lineInfos = m.getTargetLineInfo();
+			int b = 1;
+			for (Line.Info lineInfo:lineInfos){
+				System.out.println("Target Line: " + b);
+				System.out.println (m+"---"+lineInfo);
+				Line line = m.getLine(lineInfo);
+				System.out.println("\t-----"+line);
+				b++;
+			}
+			i++;
+			System.out.println();
+
+		}
+		*/
+		Mixer.Info[] mixers = AudioSystem.getMixerInfo();
+		for(Mixer.Info a: mixers){
+			System.out.println(a);
+		}
+		Mixer.Info info = mixers[2];
+		Mixer m = AudioSystem.getMixer(info);
+		Line.Info[] lineInfos = m.getSourceLineInfo();
+		Line.Info lineInfo = lineInfos[0];
+		Line line = m.getLine(lineInfo);
+		
+
+	}
+
+}

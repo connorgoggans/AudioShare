@@ -1,0 +1,78 @@
+package senderClient;
+
+import java.io.ByteArrayOutputStream;
+
+import javax.sound.sampled.*;
+
+public class sender {
+
+	public static void main(String[] args) throws LineUnavailableException {
+		
+		Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
+		int i = 1;
+		for (Mixer.Info info: mixerInfos){
+			System.out.println("Mixer: " + i + " " + info);
+			Mixer m = AudioSystem.getMixer(info);
+			/*
+			Line.Info[] lineInfos = m.getSourceLineInfo();
+			int a = 1;
+			for (Line.Info lineInfo:lineInfos){
+				System.out.println("Source Line: " + a);
+				System.out.println (info.getName()+"---"+lineInfo);
+				Line line = m.getLine(lineInfo);
+				System.out.println("\t-----"+line);
+				a++;
+			}
+			*/
+			Line.Info[] lineInfos = m.getTargetLineInfo();
+			int b = 1;
+			for (Line.Info lineInfo:lineInfos){
+				System.out.println("Target Line: " + b);
+				System.out.println (m+"---"+lineInfo);
+				Line line = m.getLine(lineInfo);
+				System.out.println("\t-----"+line);
+				b++;
+			}
+			i++;
+			System.out.println();
+
+		}
+		
+		System.out.println("\n\n\n");
+		Mixer.Info[] mixers = AudioSystem.getMixerInfo();
+		Mixer.Info info = mixers[2];
+		Mixer m = AudioSystem.getMixer(info);
+		Line.Info[] lineInfos = m.getSourceLineInfo();
+		Line.Info lineInfo = lineInfos[0];
+		Line line = m.getLine(lineInfo);
+		
+		TargetDataLine target = (TargetDataLine)line;
+		AudioFormat format = new AudioFormat(8000.0f, 16, 1, true, true);
+		
+		try {
+		    target.open(format);
+		} catch (LineUnavailableException ex) {
+			//TODO: Handle Error
+		}
+		
+		// Assume that the TargetDataLine, line, has already
+		// been obtained and opened.
+		ByteArrayOutputStream out  = new ByteArrayOutputStream();
+		int numBytesRead;
+		byte[] data = new byte[target.getBufferSize() / 5];
+
+		// Begin audio capture.
+		target.start();
+
+		// Here, stopped is a global boolean set by another thread.
+		for(int c = 0; c < 10000; c++) {
+		   // Read the next chunk of data from the TargetDataLine.
+		   numBytesRead =  target.read(data, 0, data.length);
+		   // Save this chunk of data.
+		   out.write(data, 0, numBytesRead);
+		}
+		
+
+	}
+
+}
