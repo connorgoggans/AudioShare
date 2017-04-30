@@ -37,7 +37,6 @@ public class awsserver {
 				       bytesRead = audio.read(buffer, current, (buffer.length-current));
 				       outStream.write(buffer);
 				       if(bytesRead >= 0) {
-					   current += bytesRead;
 				       }
 				       System.out.print(audio.available() + " ");
 				    }
