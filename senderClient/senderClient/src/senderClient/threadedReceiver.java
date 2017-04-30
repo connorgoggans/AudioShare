@@ -6,28 +6,27 @@ import java.io.IOException;
 
 public class threadedReceiver extends Thread{
 
-    Socket s;
-    InputStream audio;
+	Socket s;
+	File audio;
 
-    public void run(){
-	try {
-	    OutputStream out = s.getOutputStream();
-	    int len;
-	    while((len = audio.read()) != -1){
-		out.write((byte)len);
-		if(len == '\n'){
-		    out.flush();
-		}
-	    }
-	}catch (IOException e) {
-	    e.printStackTrace();
+	public void run(){
+        OutputStream out = s.getOutputStream();
+        FileInputStream in = new FileInputStream(audio);
+   
+        byte buffer[] = new byte[2048];
+        int count;
+        count = in.read(buffer);
+        while(count >= 0){
+        		System.out.print(count + " ");
+            	out.write(buffer,0,count);
+            	count = in.read(buffer);	
+        }
 	}
-    }
 
-    public threadedReceiver(Socket socket, InputStream input){
-        this.s = socket;
-        this.audio = input;
-    }
+	public threadedReceiver(Socket socket, File input){
+		this.s = socket;
+		this.audio = input;
+	}
 
 
 };
