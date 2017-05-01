@@ -1,60 +1,62 @@
 package senderClient;
-
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.io.*;
 import java.net.*;
-import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.io.BufferedReader;
 
 public class AudioServer {
 	public static void main(String[] args) throws IOException {
+		//initialize data
+		ServerSocket ss = null;
+		File file = null;
+		ReentrantReadWriteLock fileLock = new ReentrantReadWriteLock();
+		BufferedReader buffIn;
 
-		Scanner key = new Scanner(System.in); //Scanner for reading from keyboard
+		try {
+			ss = new ServerSocket(8888); //create a server socket
 
-		Socket s = new Socket("34.200.251.30", 8888); //AWS IP
+			//create thread pool of 10 threads
+			ExecutorService p = Executors.newFixedThreadPool(10);
+			file = new File("audioFile");
 
-		Boolean done = false;
-		
-		OutputStream out = s.getOutputStream(); //Get the output stream for the socket
+			//loop and create worker threads for connections
+			while(true) {
 
-		while(!done){
-			System.out.print("Sound file to stream (or exit to end): ");
-
-			String file = key.nextLine();
-			
-			if(s.isClosed()){
-				s = new Socket("34.200.251.30", 8888);
-				out = s.getOutputStream();
-			}
-			
-			PrintWriter pw = new PrintWriter(out, true);
-			
-			//Say that this is the sender
-			pw.println("sender");
-
-			if(file.equals("exit")){
-				done = true;
-			}else{
-				File soundFile = new File(file);
-
-				System.out.println("Streaming: " + soundFile);
-
-				FileInputStream in = new FileInputStream(soundFile); //input stream of the file
-
-				byte buffer[] = new byte[2048]; 
-				int count;
-				count = in.read(buffer);
-				//loop to write out the file
-				while(count >= 0){
-					out.write(buffer,0,count);
-					count = in.read(buffer);	
+				if(file == null) {
 				}
-				in.close();
-				out.close();
-				
+				else {
+					Socket s = ss.accept();
+					
+					buffIn = new BufferedReader(new InputStreamReader(s.getInputStream()));
+					
+					//read if it's sender or receiver
+					String line = buffIn.readLine();
+					Thread w;
+					
+					if (line.equals("sender")) {
+						w = new threadedSender(s, file, fileLock);
+					}
+					else {
+						w = new threadedReceiver(s, file, fileLock);
+					}//handle the streaming to clients in individual threads
+					
+					p.execute(w);
+				}
+
+			}
+
+		}catch(IOException e) {
+			e.printStackTrace();
+		}finally {
+			if (ss != null){
+				try {
+					ss.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-
-		s.close();
-		key.close();
-		System.out.println("Done");
 	}
 }

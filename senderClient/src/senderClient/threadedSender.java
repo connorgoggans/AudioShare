@@ -10,64 +10,54 @@ import java.io.InputStream;
 
 public class threadedSender extends Thread {
 
+	File file;
+	InputStream audio;
+	Socket socket;
+	ReentrantReadWriteLock fileLock;
 
-    private static threadedSender instance = null;
-    File file;
-    InputStream audio;
-    Socket socket;
-    ReentrantReadWriteLock fileLock;
-    
-    public void run() {
-	OutputStream out=null;
-	try {
-	    while(true) {
-	    audio = new BufferedInputStream(socket.getInputStream());
-	    while(audio.available()==0);
-	    boolean connect = socket.isConnected();
-	    System.out.println(connect);
-	    System.out.println("Sending file...");
-	    fileLock.writeLock().lock();
-	    //    file = new File("audioFile.wav");
-	    byte[] bytes = new byte[2048];
-	    //audio = new BufferedInputStream(socket.getInputStream());
-	    out = new FileOutputStream(file);
-	    int count;
-	    //write out data to the file
-	    while ((count = audio.read(bytes)) >0) {
-		out.write(bytes,0,count);
-	    }
-	    out.flush();
-	    fileLock.writeLock().unlock();
-	    System.out.println("done: "+ file);
-	    }
-	    
-	}catch(IOException e) {
-	    e.printStackTrace();
-	}finally {
-	    try {
-		out.close();
-	    }catch (IOException e) {
-		e.printStackTrace();
-	    }
+	public void run() {
+		OutputStream out=null;
+		try {
+			while(true) {
+				audio = new BufferedInputStream(socket.getInputStream());
+				
+				while(audio.available()==0); //wait until data is available
+				
+				System.out.println("Sending file...");
+				
+				fileLock.writeLock().lock();
+				
+				byte[] bytes = new byte[2048];
+				
+				out = new FileOutputStream(file); //file output stream
+				
+				//num of bytes read
+				int count;
+				
+				while ((count = audio.read(bytes)) >0) {
+					out.write(bytes,0,count);
+				}
+				
+				out.flush();
+				fileLock.writeLock().unlock();
+			}
+
+		}catch(IOException e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				out.close();
+			}catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
-    }
 
 
-    public threadedSender(File f, Socket s, ReentrantReadWriteLock l) {
-	this.file = f;
-	//this.audio = a;
-	this.socket = s;
-	this.fileLock = l;
-    }
-
-	//public static threadedSender getSender(File f, InputStream a) {
-	//	if (instance == null) {
-	//	    instance = new threadedSender();
-	//	    instance.file = f;
-	//	    instance.audio = a;
-	//instance.socket = s;
-	//	}
-	//	return instance;
-	//}
+	public threadedSender(Socket s, File f, ReentrantReadWriteLock l) {
+		this.file = f;
+		this.socket = s;
+		this.fileLock = l;
+	}
 
 };
