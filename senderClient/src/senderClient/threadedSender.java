@@ -7,9 +7,9 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
 
 public class threadedSender extends Thread {
+
 
     private static threadedSender instance = null;
     File file;
@@ -52,6 +52,7 @@ public class threadedSender extends Thread {
 	}
     }
 
+
     public threadedSender(File f, Socket s, ReentrantReadWriteLock l) {
 	this.file = f;
 	//this.audio = a;
@@ -59,14 +60,14 @@ public class threadedSender extends Thread {
 	this.fileLock = l;
     }
 
-    //public static threadedSender getSender(File f, InputStream a) {
-    //	if (instance == null) {
-    //	    instance = new threadedSender();
-    //	    instance.file = f;
-    //	    instance.audio = a;
-	    //instance.socket = s;
-    //	}
-    //	return instance;
-    //}
+	//public static threadedSender getSender(File f, InputStream a) {
+	//	if (instance == null) {
+	//	    instance = new threadedSender();
+	//	    instance.file = f;
+	//	    instance.audio = a;
+	//instance.socket = s;
+	//	}
+	//	return instance;
+	//}
 
 };

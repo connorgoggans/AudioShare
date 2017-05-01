@@ -12,11 +12,23 @@ public class AudioServer {
 		Socket s = new Socket("34.200.251.30", 8888); //AWS IP
 
 		Boolean done = false;
+		
+		OutputStream out = s.getOutputStream(); //Get the output stream for the socket
 
 		while(!done){
 			System.out.print("Sound file to stream (or exit to end): ");
 
 			String file = key.nextLine();
+			
+			if(s.isClosed()){
+				s = new Socket("34.200.251.30", 8888);
+				out = s.getOutputStream();
+			}
+			
+			PrintWriter pw = new PrintWriter(out, true);
+			
+			//Say that this is the sender
+			pw.println("sender");
 
 			if(file.equals("exit")){
 				done = true;
@@ -24,8 +36,6 @@ public class AudioServer {
 				File soundFile = new File(file);
 
 				System.out.println("Streaming: " + soundFile);
-
-				OutputStream out = s.getOutputStream(); //Get the output stream for the socket
 
 				FileInputStream in = new FileInputStream(soundFile); //input stream of the file
 
@@ -37,8 +47,9 @@ public class AudioServer {
 					out.write(buffer,0,count);
 					count = in.read(buffer);	
 				}
-				out.close();
 				in.close();
+				out.close();
+				
 			}
 		}
 

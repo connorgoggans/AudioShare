@@ -12,6 +12,8 @@ public class AudioClient {
 		while(true){
 			try (Socket socket = new Socket("34.200.251.30", 8888)) { //AWS IP
 				if (socket.isConnected()) { //while connected to the socket play the audio
+					PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
+					pw.println("receiver");
 					InputStream in = new BufferedInputStream(socket.getInputStream());
 					play(in);
 				}
